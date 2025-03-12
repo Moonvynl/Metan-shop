@@ -30,23 +30,26 @@
             </div>
         </div>
         <div class="hidden md:flex flex items-center space-x-3">
-            <span class="hidden md:inline font-medium">{% if self.user.is_authenticated %} Профіль</span>
-            <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full border">
-            {% else %} <a class="hover:text-gray-800" href="">Увійти</a>/<a class="hover:text-gray-800" href="">Зареєструватися</a>{% endif %}</span>
+            <span class="hidden md:inline font-medium">{% if user.is_authenticated %} Профіль</span>
+            <img src="{{ user.avatar.url }}" alt="Profile" class="w-10 h-10 rounded-full border">
+            {% else %} <a class="hover:text-gray-800" href="{% url 'user_auth:login' %}">Увійти</a>/<a class="hover:text-gray-800"
+                href="{% url 'user_auth:register' %}">Зареєструватися</a>{% endif %}</span>
         </div>
     </nav>
-    
+
 
     <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden"></div>
-    
-    <div id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-white shadow-lg transform -translate-x-full transition-transform">
+
+    <div id="sidebar"
+        class="fixed top-0 left-0 w-64 h-full bg-white shadow-lg transform -translate-x-full transition-transform">
         <div class="p-5 border-b flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                {% if self.user.is_authenticated %}
-                <img src="https://via.placeholder.com/40" alt="Фото профілю" class="w-10 h-10 rounded-full">
-                <span class="font-semibold">Нікнейм</span>
+                {% if user.is_authenticated %}
+                <img src="{{ user.avatar.url }}" alt="Фото профілю" class="w-10 h-10 rounded-full">
+                <span class="font-semibold">{{user.username}}</span>
                 {% else %}
-                <span class="font-semibold"><a class="hover:text-gray-800" href="">Увійти</a>/<a class="hover:text-gray-800" href="">Зареєструватися</a></span>
+                <span class="font-semibold"><a class="hover:text-gray-800" href="{% url 'user_auth:login' %}">Увійти</a>/<a
+                        class="hover:text-gray-800" href="{% url 'user_auth:register' %}">Зареєструватися</a></span>
                 {% endif %}
             </div>
             <button id="closeMenu" class="text-gray-700 text-xl">✖</button>
@@ -66,25 +69,34 @@
             <li class="text-gray-700">0 800 403 173</li>
             <li class="text-gray-700">063 789 66 52</li>
             <li class="text-gray-700">050 659 01 12</li>
+            {% if user.is_authenticated %}
+            <hr>
+            <li class="mt-auto">
+                <form action="{% url 'user_auth:logout' %}" method="post" class="text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-full block text-center">
+                    {% csrf_token %}
+                    <button type="submit">Вийти</button>
+                </form>
+            </li>
+            {% endif %}
         </ul>
     </div>
-    
+
     <script>
         const menuButton = document.getElementById("menuButton");
         const sidebar = document.getElementById("sidebar");
         const closeMenu = document.getElementById("closeMenu");
         const overlay = document.getElementById("overlay");
-        
+
         function openMenu() {
             sidebar.classList.remove("-translate-x-full");
             overlay.classList.remove("hidden");
         }
-        
+
         function closeMenuHandler() {
             sidebar.classList.add("-translate-x-full");
             overlay.classList.add("hidden");
         }
-        
+
         menuButton.addEventListener("click", openMenu);
         closeMenu.addEventListener("click", closeMenuHandler);
         overlay.addEventListener("click", closeMenuHandler);
