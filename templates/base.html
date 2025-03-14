@@ -23,17 +23,21 @@
             <div class="text-xl font-bold">Metan Shop</div>
         </div>
         <div class="flex items-center space-x-2">
-            <button class="hidden md:flex bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800">Каталог</button>
-            <div class="flex justify-center">
+            <button class="hidden md:flex bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800"
+                onclick="openCategoryMenu()">Каталог</button>
+            <div class="flex justify-center mr-2">
                 <input type="text" placeholder="Search..."
                     class="px-4 py-2 border rounded-lg w-40 sm:w-60 md:w-80 focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
         </div>
-        <div class="hidden md:flex flex items-center space-x-3">
-            <span class="hidden md:inline font-medium">{% if user.is_authenticated %} Профіль</span>
+        <div class="flex items-center space-x-3">
+            <a href="">
+                <i class="fa-solid fa-cart-shopping text-xl md:text-2xl"></i>
+            </a>
+            <span class="hidden md:inline font-medium">{% if user.is_authenticated %}</span>
             <img src="{{ user.avatar.url }}" alt="Profile" class="w-10 h-10 rounded-full border">
-            {% else %} <a class="hover:text-gray-800" href="{% url 'user_auth:login' %}">Увійти</a>/<a class="hover:text-gray-800"
-                href="{% url 'user_auth:register' %}">Зареєструватися</a>{% endif %}</span>
+            {% else %} <a class="hover:text-gray-800" href="{% url 'user_auth:login' %}">Увійти</a>/<a
+                class="hover:text-gray-800" href="{% url 'user_auth:register' %}">Зареєструватися</a>{% endif %}</span>
         </div>
     </nav>
 
@@ -48,8 +52,9 @@
                 <img src="{{ user.avatar.url }}" alt="Фото профілю" class="w-10 h-10 rounded-full">
                 <span class="font-semibold">{{user.username}}</span>
                 {% else %}
-                <span class="font-semibold"><a class="hover:text-gray-800" href="{% url 'user_auth:login' %}">Увійти</a>/<a
-                        class="hover:text-gray-800" href="{% url 'user_auth:register' %}">Зареєструватися</a></span>
+                <span class="font-semibold"><a class="hover:text-gray-800"
+                        href="{% url 'user_auth:login' %}">Увійти</a>/<a class="hover:text-gray-800"
+                        href="{% url 'user_auth:register' %}">Зареєструватися</a></span>
                 {% endif %}
             </div>
             <button id="closeMenu" class="text-gray-700 text-xl">✖</button>
@@ -72,7 +77,8 @@
             {% if user.is_authenticated %}
             <hr>
             <li class="mt-auto">
-                <form action="{% url 'user_auth:logout' %}" method="post" class="text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-full block text-center">
+                <form action="{% url 'user_auth:logout' %}" method="post"
+                    class="text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-full block text-center">
                     {% csrf_token %}
                     <button type="submit">Вийти</button>
                 </form>
@@ -80,6 +86,101 @@
             {% endif %}
         </ul>
     </div>
+
+    <div id="categoryModal" class="fixed inset-0 flex items-center justify-center hidden" style="z-index: 2147483647;">
+        <div class="bg-white shadow-2xl rounded-2xl p-6 md:container absolute inset-x-50 top-20 w-full max-w-lg md:max-w-2xl lg:max-w-4xl" style="max-height: 900px; overflow-y: auto;">
+            <ul class="space-y-2 text-gray-700 columns-1 sm:columns-2 md:columns-3 lg:columns-4">
+                {% for category in categories %}
+                <li class="relative group break-inside-avoid">
+                    <a href="" class="font-semibold flex justify-between items-center">
+                        {{category.name}} {% if category.undercategory.all %}
+                        <i class="fa-solid fa-angle-down cursor-pointer"></i> {% endif %}
+                    </a>
+    
+                    {% if category.undercategory.all %}
+                    <ul class="pl-4 space-y-1 hidden">
+                        {% for undercategory in category.undercategory.all %}
+                        <a href="">
+                            <li>{{undercategory.name}}</li>
+                        </a>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    {% block content %}
+
+    {% endblock %}
+
+
+    <footer class="bg-gray-100 text-gray-700 py-10">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">Metan Shop</h2>
+                    <p class="mt-2 text-sm">
+                        Київ, вул. Хрещатик, 12 <br>
+                        ТРЦ "Dream Town", 2 поверх
+                    </p>
+                    <p class="mt-2 text-sm font-semibold">Пн - Нд: <span class="text-black">з 10:00 до 20:00</span></p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-900">Інформація</h3>
+                    <ul class="mt-2 space-y-1 text-sm">
+                        <li><a href="#" class="hover:text-black">Контакти</a></li>
+                        <li><a href="#" class="hover:text-black">Доставка і оплата</a></li>
+                        <li><a href="#" class="hover:text-black">Про магазин</a></li>
+                        <li><a href="#" class="hover:text-black">Гарантії</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-900">Зв'яжіться з нами</h3>
+                    <p class="mt-2 text-sm">0 800 123 456</p>
+                    <p class="text-sm">+38 067 987 6543</p>
+                    <p class="text-sm">+38 050 555 1212</p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-900">Особиста інформація</h3>
+                    <ul class="mt-2 space-y-1 text-sm">
+                        <li><a href="#" class="hover:text-black">Авторизація</a></li>
+                        <li><a href="#" class="hover:text-black">Реєстрація</a></li>
+                        <li><a href="#" class="hover:text-black">Політика конфіденційності</a></li>
+                        <li><a href="#" class="hover:text-black">Договір оферти</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-8 border-t pt-6 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                <div class="flex items-center justify-center space-x-3">
+                    <i class="fa-solid fa-truck-fast text-2xl text-red-500"></i>
+                    <p class="text-sm"><span class="font-bold">Безкоштовна доставка</span> <br>При замовленні від 2500 грн</p>
+                </div>
+                <div class="flex items-center justify-center space-x-3">
+                    <i class="fa-solid fa-shield-halved text-2xl text-green-500"></i>
+                    <p class="text-sm"><span class="font-bold">Гарантії</span> <br>Захист прав споживачів</p>
+                </div>
+                <div class="flex items-center justify-center space-x-3">
+                    <i class="fa-solid fa-headset text-2xl text-blue-500"></i>
+                    <p class="text-sm"><span class="font-bold">24/7 Онлайн підтримка</span> <br>Вирішимо будь-яке питання</p>
+                </div>
+            </div>
+            <div class="mt-8 flex flex-col md:flex-row justify-between items-center text-sm">
+                <div class="flex space-x-4">
+                    <a href="#" class="text-blue-500 text-2xl"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#" class="text-red-500 text-2xl"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="#" class="text-pink-500 text-2xl"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+                <p class="mt-4 md:mt-0">&copy; 2025 Metan Shop™ - Інтернет-магазин товарів</p>
+                <div class="flex space-x-2">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" class="h-6" alt="Visa">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png" class="h-6" alt="Mastercard">
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <script>
         const menuButton = document.getElementById("menuButton");
@@ -100,6 +201,37 @@
         menuButton.addEventListener("click", openMenu);
         closeMenu.addEventListener("click", closeMenuHandler);
         overlay.addEventListener("click", closeMenuHandler);
+
+
+        function openCategoryMenu() {
+            document.getElementById("categoryModal").classList.remove("hidden");
+        }
+
+        function closeCategoryMenu() {
+            document.getElementById("categoryModal").classList.add("hidden");
+        }
+
+        document.addEventListener("click", function (event) {
+            let modal = document.getElementById("categoryModal");
+            if (event.target === modal) {
+                closeCategoryMenu();
+            }
+        });
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".fa-angle-down").forEach(icon => {
+        icon.addEventListener("click", function (event) {
+            event.preventDefault();
+            let subcategories = this.closest("li").querySelector("ul");
+            
+            if (subcategories) {
+                subcategories.classList.toggle("hidden");
+            }
+        });
+    });
+});
+
     </script>
 </body>
 
