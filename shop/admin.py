@@ -1,7 +1,9 @@
 from django.contrib import admin
-from .models import Product, Review, Category, UnderCategory
+from .models import *
 
 admin.site.register(Product)
 admin.site.register(Review)
 admin.site.register(Category)
 admin.site.register(UnderCategory)
+admin.site.register(ProductForCart)
+admin.site.register(Cart)
