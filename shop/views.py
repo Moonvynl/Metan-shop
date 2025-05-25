@@ -38,7 +38,42 @@ class ProductDetailView(BaseView):
         context['reviews'] = Review.objects.filter(on_product=context['product'])
         context['interestings'] = Product.objects.order_by('-pk').filter(category=context['product'].category)[:4]
         return context
-    
+
+
+class CartView(BaseView):
+    template_name = 'shop/cart.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        products = ProductForCart.objects.filter(user=self.request.user)
+        total_price = 0
+        for product in products:
+            total_price += product.product.price * product.quantity
+        context['products'] = products
+        print(products)
+        context['total_price'] = total_price
+        return context
+
+
+def add_quantity(request, product_id):
+    product = ProductForCart.objects.get(id=product_id)
+    product.quantity += 1
+    product.save()
+    return HttpResponseRedirect(request.META["HTTP_REFERER"])
+
+def remove_quantity(request, product_id):
+    product = ProductForCart.objects.get(id=product_id)
+    if product.quantity > 1:
+        product.quantity -= 1
+        product.save()
+    else:
+        product.delete()
+    return HttpResponseRedirect(request.META["HTTP_REFERER"])
+
+def delete_product_for_cart(request, product_id):
+    product = ProductForCart.objects.get(id=product_id)
+    product.delete()
+    return HttpResponseRedirect(request.META["HTTP_REFERER"])
 
 
 def add_to_cart(request, product_id):

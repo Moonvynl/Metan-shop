@@ -32,7 +32,7 @@
             </div>
         </div>
         <div class="flex items-center space-x-3">
-            <a href="#" class="relative">
+            <a href="{% url 'shop:cart' %}" class="relative">
                 <i class="fa-solid fa-cart-shopping text-xl md:text-2xl"></i>
                 <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
                     {{cart_products_count}}

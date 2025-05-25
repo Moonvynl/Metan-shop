@@ -4,7 +4,7 @@
         <img src="{{product.image.url}}" alt="{{product.name}}" class="w-full">
         {% if product.discount %}
         <span
-            class="absolute top-2 left-2 bg-red-100 text-red-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-red-200 dark:text-red-800">-{{product.discount}}%</span>
+            class="absolute top-2 left-2 bg-red-100 text-red-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-red-200 dark:text-red-800">-{{ product.discount|floatformat:"-0" }}%</span>
         {% endif %}
     </a>
     <div class="p-4 flex flex-col flex-grow">
