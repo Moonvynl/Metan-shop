@@ -65,14 +65,10 @@
                         {% else %}
                             <span class="text-3xl font-bold">{{ product.price }} грн</span>
                         {% endif %}
-                        <form action="">
-                            <div class="flex items-center border rounded-lg overflow-hidden mt-2">
-                                <button class="px-3 py-2">-</button>
-                                <span class="px-4">1</span>
-                                <button class="px-3 py-2">+</button>
-                            </div>
-                        </div>
                         <form action="{% url 'shop:add_to_cart' product.id %}">
+                            <div class="flex items-center border rounded-lg overflow-hidden mt-2">
+                                <input type="number" name="quantity" value="1" min="1" class="w-16 text-center outline-none" />
+                            </div>
                             <button {% if not product.is_available %} disabled {% endif %}
                             class="mt-2 text-white font-bold py-2 px-4 rounded-full border border-gray-300 transition-colors duration-300
                                     {% if not product.is_available %} 
@@ -80,10 +76,9 @@
                                     {% else %}
                                         bg-black hover:bg-gray-800 hover:border-gray-400
                                     {% endif %}">
-                        У кошик
-                    </button>
+                                    У кошик
+                            </button>
                         </form>
-                    </form>
                     <button class="ml-2 text-gray-500 hover:text-gray-700">♡</button>
                     <div class="mb-4">
                         <p class="text-green-500">Безкоштовна доставка від 2500 грн.</p>

@@ -33,11 +33,12 @@ class ProductDetailView(BaseView):
     template_name = 'shop/product_detail.html'
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['product'] = Product.objects.get(pk=self.kwargs['pk'])
+        context = super().get_context_data(**kwargs) 
+        context['product'] = Product.objects.get(pk=self.kwargs['product_id'])
         context['reviews'] = Review.objects.filter(on_product=context['product'])
         context['interestings'] = Product.objects.order_by('-pk').filter(category=context['product'].category)[:4]
         return context
+    
 
 
 def add_to_cart(request, product_id):
@@ -45,6 +46,11 @@ def add_to_cart(request, product_id):
     if request.user.is_authenticated:
         user = request.user
         cart = Cart.objects.filter(user=user).first()
+
+        if request.GET.get('quantity'):
+            quantity = request.GET.get('quantity')
+            print(quantity)
+        
         if not cart:
             cart = Cart.objects.create(user=user)
 
@@ -53,10 +59,12 @@ def add_to_cart(request, product_id):
             product_for_cart = ProductForCart.objects.create(user=user, product=product)
             
         if cart.products.filter(id=product_for_cart.id, user=user).exists():
-            product_for_cart.quantity += 1
+            product_for_cart.quantity += int(quantity) if quantity else 1
             product_for_cart.save()
             messages.success(request, f"{product.name} sucsessfully added to cart")
         else:
+            product_for_cart.quantity = int(quantity) if quantity else 1
+            product_for_cart.save()
             cart.products.add(product_for_cart)
             messages.success(request, f"{product.name} sucsessfully added to cart")
         return HttpResponseRedirect(request.META["HTTP_REFERER"])

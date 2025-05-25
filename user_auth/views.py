@@ -21,7 +21,7 @@ avatars = [
 class RegisterView(CreateView):
     form_class = RegisterForm
     template_name = "user_auth/register.html"
-    success_url = reverse_lazy("shop:base")
+    success_url = reverse_lazy("shop:home_page")
     def form_valid(self, form):
         user = form.save()
         user.avatar = random.choice(avatars)
