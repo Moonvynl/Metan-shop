@@ -73,6 +73,13 @@
             <li><a href="#" class="block p-2 hover:bg-gray-200 rounded">Доставка і оплата</a></li>
             <li><a href="#" class="block p-2 hover:bg-gray-200 rounded">Про магазин</a></li>
             <li><a href="#" class="block p-2 hover:bg-gray-200 rounded">Гарантії</a></li>
+            {% if user.access == 'CM' %}
+                <li><a href="#" class="block p-2 hover:bg-gray-200 rounded">Content Manager Panel</a></li>
+            {% elif user.access == 'OM' %}
+                <li><a href="#" class="block p-2 hover:bg-gray-200 rounded">Order Manager Panel</a></li>
+            {% elif user.access == 'AD' %}
+                <li><a href="{% url 'shop:admin_panel' %}" class="block p-2 hover:bg-gray-200 rounded"><strong class='font-bold'>Admin panel</strong></a></li>
+            {% endif %}
             <hr>
             <li class="text-gray-500 mt-4">Зв'яжіться з нами</li>
             <li class="text-gray-700">0 800 403 173</li>

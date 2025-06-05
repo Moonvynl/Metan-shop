@@ -21,3 +21,7 @@ def total_price_with_discount(price, discount, quantity):
         return "{:.2f}".format(discounted_price * quantity)
     except (ValueError, TypeError):
         return "0.00"
+
+@register.filter
+def stars_for_review_moderation(rating):
+    return "★" * rating
