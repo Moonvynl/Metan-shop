@@ -1,0 +1,91 @@
+{% extends 'admin_stuff/admin_panel.html' %}
+{% block title %}Модерація відгуків{% endblock %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold mb-4">Відгуки на модерації (3)</h2>
+
+    <div class="mb-4 flex items-center space-x-4">
+        <input type="text" placeholder="Пошук за текстом або ім'ям..."
+            class="p-2 border border-gray-300 rounded-md flex-grow">
+        <button class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition">Застосувати</button>
+    </div>
+
+<div class="overflow-x-auto">
+    <table class="min-w-full bg-white">
+        <thead>
+            <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                <th class="py-3 px-6 text-left">Товар</th>
+                <th class="py-3 px-6 text-left">Користувач</th>
+                <th class="py-3 px-6 text-left">Рейтинг</th>
+                <th class="py-3 px-6 text-left">Текст відгуку</th>
+                <th class="py-3 px-6 text-center">Дата</th>
+                <th class="py-3 px-6 text-center">Дії</th>
+            </tr>
+        </thead>
+        <tbody class="text-gray-600 text-sm font-light">
+            {% if object_list %}
+                {% for review in object_list %}
+                <tr class="border-b border-gray-200 hover:bg-gray-100">
+                    <td class="py-3 px-6 text-left whitespace-nowrap">
+                        <div class="flex items-center">
+                            <span class="font-medium">{{review.on_product.name}}</span>
+                        </div>
+                    </td>
+                    <td class="py-3 px-6 text-left">
+                        <div class="flex items-center">
+                            <span>{{review.author.username}}</span>
+                        </div>
+                    </td>
+                    <td class="py-3 px-6 text-left">
+                        <span class="text-yellow-500">{{review.rating|stars_for_review_moderation}}</span>
+                    </td>
+                    <td class="py-3 px-6 text-left max-w-xs overflow-hidden text-ellipsis">
+                        {{review.text}}
+                    </td>
+                    <td class="py-3 px-6 text-center">{{review.created_at}}</td>
+                    <td class="py-3 px-6 text-center">
+                        <div class="flex item-center justify-center space-x-2">
+                            <a class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+                                href="{% url 'shop:accept_review' review.id %}">Схвалити</a>
+                            <a class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                                href="{% url 'shop:decline_review' review.id %}">Відхилити</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="6" class="py-12 px-6 text-center">
+                        <div class="bg-gray-50 p-6 rounded-lg shadow-inner">
+                            <h2 class="text-xl font-bold mb-2 text-gray-700">
+                                Відгуки для модерації відсутні
+                            </h2>
+                            <p class="text-md text-gray-600 mb-2">
+                                Дякуємо за вашу роботу! <span class="👋">👋</span>
+                            </p>
+                            <p class="text-sm text-gray-500">
+                                Ви все перевірили, і зараз немає нових відгуків, які потребують вашої уваги.
+                            </p>
+                        </div>
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+    <div class="mt-6 flex justify-center space-x-2">
+        {% for page_num in page_obj.paginator.page_range %}
+            {% if page_obj.number != page_num %}
+                <a href="?page={{page_num}}" class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400">{{page_num}}</a>
+            {% else %}
+                <a href="?page={{page_num}}" class="bg-blue-500 text-white px-4 py-2 rounded">{{page_num}}</a>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+</div>
+
+{% endblock %}

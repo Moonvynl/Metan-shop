@@ -46,7 +46,7 @@
                                 d="M10 15l-5.878 3.09 1.123-6.545L.109 9.539l6.572-.955L10 2.82l2.319 5.763 6.573.955-4.756 4.624 1.123 6.545z" />
                         </svg>
                         <span class="text-grey-500">{% if product.calculate_rating %} {{product.calculate_rating}} {% else %} 0 {% endif %}</span>
-                        <span class="text-gray-600">({{product.product_reviews.count}})</span>
+                        <span class="text-gray-600">({{total_reviews}})</span>
                     </div>
                     <p class="text-sm text-gray-500 mb-4">Код: {{product.id}}</p>
                     <p class="mb-4">{{ product.description }}</p>
@@ -65,14 +65,10 @@
                         {% else %}
                             <span class="text-3xl font-bold">{{ product.price }} грн</span>
                         {% endif %}
-                        <form action="">
-                            <div class="flex items-center border rounded-lg overflow-hidden mt-2">
-                                <button class="px-3 py-2">-</button>
-                                <span class="px-4">1</span>
-                                <button class="px-3 py-2">+</button>
-                            </div>
-                        </div>
                         <form action="{% url 'shop:add_to_cart' product.id %}">
+                            <div class="flex items-center border rounded-lg overflow-hidden mt-2">
+                                <input type="number" name="quantity" value="1" min="1" class="w-16 text-center outline-none" />
+                            </div>
                             <button {% if not product.is_available %} disabled {% endif %}
                             class="mt-2 text-white font-bold py-2 px-4 rounded-full border border-gray-300 transition-colors duration-300
                                     {% if not product.is_available %} 
@@ -80,10 +76,9 @@
                                     {% else %}
                                         bg-black hover:bg-gray-800 hover:border-gray-400
                                     {% endif %}">
-                        У кошик
-                    </button>
+                                    У кошик
+                            </button>
                         </form>
-                    </form>
                     <button class="ml-2 text-gray-500 hover:text-gray-700">♡</button>
                     <div class="mb-4">
                         <p class="text-green-500">Безкоштовна доставка від 2500 грн.</p>
@@ -116,10 +111,10 @@
             </div>
         </div>
         <div class="mt-8">
-            <h2 class="text-2xl font-bold mb-4">Відгуки</h2>
-            {% if product.product_reviews %}
+            <h2 class="text-2xl font-bold mb-4">Відгуки({{total_reviews}})</h2>
+            {% if reviews.all %}
             <div class="border p-4 mb-2">
-                {% for review in product.product_reviews.all %}
+                {% for review in reviews.all %}
                     <div class="flex items-center mb-1">
                         <p class="font-semibold mr-2">{{ review.author }}</p>
                         <div class="flex items-center">
@@ -135,9 +130,41 @@
                 {% endfor %}
             </div>
             {%else%}
-            <p>Тут поки пусто</p>
+            <div style="text-align: center; padding: 50px;">
+                <div style="font-size: 64px;">💬😔</div>
+                <h1 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #666;">
+                    Відгуків поки немає
+                </h1>
+                <p style="color: #999;">Будьте першим, хто залишить свою думку про цей товар.</p>
+            </div>
             {% endif %}
+
+            <form method="POST" action="{% url 'shop:create_review' product_id=product.pk %}" class="max-w-md p-4 bg-gray-50 rounded-md space-y-4 text-sm text-gray-800">
+                {% csrf_token %}
+                <h2 class="text-base font-medium mb-2">Ваш відгук</h2>
+                <div>
+
+                    <label class="block mb-1">Оцінка:</label>
+                        <div class="flex items-center space-x-2">
+                            {% for i in "12345" %}
+                                <input type="radio" name="rating" id="rating{{ i }}" value="{{ i }}" class="form-radio text-blue-600" />
+                                <label for="rating{{ i }}" class="cursor-pointer text-gray-800">{{ i }}</label>
+                            {% endfor %}
+                        </div>
+                </div>
+
+                    <div>
+                        <label for="text" class="block mb-1">Коментар:</label>
+                        <textarea id="text" name="text" rows="4" placeholder="Напишіть щось..."
+                            class="w-full px-2 py-1 border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-blue-400 resize-none text-sm bg-white"></textarea>
+                    </div>
+
+                    <button type="submit"
+                        class="px-3 py-1.5 bg-blue-600 text-white rounded-sm hover:bg-blue-700 transition">
+                        Надіслати
+                    </button>
+                </form>
         </div>
     </div>
-    
+</div>
 {% endblock %}

@@ -1,5 +1,7 @@
 from django.db import models
 from django.conf import settings
+from django.core.validators import MinValueValidator, MaxValueValidator
+
 
 class Category(models.Model):
     name = models.CharField(max_length=255)
@@ -38,18 +40,30 @@ class Product(models.Model):
         return self.name
     
     def calculate_rating(self):
-        reviews = self.product_reviews.all()
+        reviews = self.product_reviews.filter(is_moderated=True).all()
         if reviews:
             total_rating = sum(review.rating for review in reviews)
-            return total_rating / len(reviews)
+            total_rating = total_rating / len(reviews)
+            if total_rating.is_integer():
+                return int(total_rating)
+            elif total_rating == 0:
+                return 0
+            else:
+                return round(total_rating, 1)
 
 
 class Review(models.Model):
     on_product = models.ForeignKey(Product, on_delete=models.CASCADE,related_name='product_reviews')
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     text = models.TextField()
-    rating = models.IntegerField()
+    rating = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
     created_at = models.DateTimeField(auto_now_add=True)
+    is_moderated = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['-rating']
 
     def __str__(self):
         return f"Review by {self.author.username} on {self.on_product.name}"
@@ -59,6 +73,7 @@ class ProductForCart(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=True)    
 
     def __str__(self):
         return f"{self.product.name} for {self.user.username}"
@@ -70,3 +85,4 @@ class Cart(models.Model):
 
     def __str__(self):
         return f"Cart for {self.user.username}"
+

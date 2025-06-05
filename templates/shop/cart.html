@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Кошик{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto p-4">
+
+    <h2 class="text-xl font-semibold mb-4">Кошик товарів</h2>
+
+    <div class="w-full border rounded-md overflow-hidden">
+        <div class="grid grid-cols-12 items-center bg-gray-50 border-b px-4 py-3 text-sm font-semibold text-gray-700">
+            <div class="col-span-6">Товар</div>
+            <div class="col-span-2 text-center">Кількість</div>
+            <div class="col-span-2 text-center">Разом</div>
+            <div class="col-span-2 text-right">Видалити</div>
+        </div>
+
+        {% if products %}
+            {% for product in products %}
+                {% include 'shop/horizontal_product_card.html' %}
+            {% endfor %}
+    </div>
+        {% else %}
+            </div>
+                <div style="text-align: center; padding: 50px;">
+                <div style="font-size: 64px;">🛒😞</div>
+                    <h1 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #666;">
+                        Тут поки пусто
+                    </h1>
+                    <p style="color: #999;">Здається, ви ще не додали жодного товару до кошика.</p>
+                </div>
+
+        {% endif %}
+        
+    <div class="mt-6 flex justify-between items-center flex-wrap gap-4">
+        <a href="javascript:history.back()"
+            class="bg-black text-white px-6 py-2 rounded hover:bg-gray-800 transition">Продовжити покупки</a>
+
+        <div class="bg-gray-100 p-4 rounded-md w-full sm:w-auto ml-auto text-right">
+            <p class="text-lg font-semibold mb-2">Разом</p>
+            <p class="text-xl font-bold mb-4">{{ total_price }} грн</p>
+            <a href="" class="bg-red-700 text-white px-6 py-2 rounded hover:bg-red-800 transition">Оформити
+                замовлення</a>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% load custom_filters %}
+
+<div class="grid grid-cols-12 items-center border-b px-4 py-3 text-sm">
+
+    <div class="col-span-1">
+        <a href="{% url 'shop:product_detail' product.product.id %}">
+            <img src="{{ product.product.image.url }}" alt="{{ product.product.name }}" class="w-14 h-14 object-contain" />
+        </a>
+    </div>
+
+    <div class="col-span-5">
+        <a href="{% url 'shop:product_detail' product.product.id %}" class="font-medium block">
+            {{ product.product.name }}
+        </a>
+        {% if product.product.flavor %}
+        <span>Смак: <strong>{{ product.product.flavor }}</strong></span>
+        {% endif %}
+    </div>
+
+    <div class="col-span-2 flex items-center justify-center space-x-2">
+        <form action="{% url 'shop:remove_quantity' product.id%}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="px-2 py-1 border rounded">−</button>
+        </form>
+        <span>{{ product.quantity }}</span>
+        <form action="{% url 'shop:add_quantity' product.id%}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="px-2 py-1 border rounded">+</button>
+        </form>
+    </div>
+
+    <div class="col-span-2 text-center font-semibold relative">
+        {% if product.product.discount %}
+            <div class="text-sm text-red-600 line-through absolute -top-5 right-0">
+                {{ product.product.price|multiply:product.quantity }} грн
+            </div>
+            <div>
+                {% total_price_with_discount product.product.price product.product.discount product.quantity %} грн
+            </div>
+        {% else %}
+            {{ product.product.price|multiply:product.quantity }} грн
+        {% endif %}
+    </div>
+    
+
+    <div class="col-span-2 text-right">
+        <form action="{% url 'shop:delete_product_for_cart' product.id %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="text-gray-500 text-lg hover:text-red-600">&times;</button>
+        </form>
+    </div>
+</div>
