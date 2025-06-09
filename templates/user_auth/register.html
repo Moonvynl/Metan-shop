@@ -9,7 +9,7 @@
         <i class="fa-solid fa-arrow-left text-2xl"></i>
     </a>
     <div class="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
-        <h2 class="text-2xl font-semibold text-center text-gray-700">Register</h2>
+        <h2 class="text-2xl font-semibold text-center text-gray-700">Зареєструватися</h2>
         {% if form.errors %}
         <div class="mb-4 p-4 bg-red-100 text-red-600 rounded-lg">
             <ul>
@@ -24,26 +24,26 @@
         <form class="mt-6" action="{% url 'user_auth:register' %}" method="post" class="form">
             {% csrf_token %}
             <div>
-                <label class="block text-sm font-medium text-gray-600">Username</label>
+                <label class="block text-sm font-medium text-gray-600">Юзернейм</label>
                 <input type="text" name="username"
                     class="w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
             </div>
             <div class="mt-4">
-                <label class="block text-sm font-medium text-gray-600">Email</label>
+                <label class="block text-sm font-medium text-gray-600">Емейл</label>
                 <input type="email" name="email"
                     class="w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
             </div>
             <div class="mt-4">
-                <label class="block text-sm font-medium text-gray-600">Password</label>
+                <label class="block text-sm font-medium text-gray-600">Пароль</label>
                 <input type="password" name="password1"
                     class="w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
             </div>
             <div class="mt-4">
-                <label class="block text-sm font-medium text-gray-600">Confirm Password</label>
+                <label class="block text-sm font-medium text-gray-600">Підтвердити пароль</label>
                 <input type="password" name="password2"
                     class="w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
             </div>
-            <button class="w-full mt-6 px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600">Register</button>
+            <button class="w-full mt-6 px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600">Підтвердити</button>
         </form>
         <div class="flex items-center my-6">
             <div class="flex-grow border-t border-gray-300"></div>

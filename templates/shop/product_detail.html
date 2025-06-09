@@ -3,82 +3,109 @@
 {% block title %}{{product.name}}{% endblock %}
 
 {% block content %}
-    <div class="border-b border-gray-200 mb-8">
-        <div class="container mx-auto p-4 flex items-center">
-            <a href="javascript:history.back()" class="text-gray-600 hover:text-gray-800 mr-4">
-                <i class="fa-solid fa-arrow-left text-2xl"></i>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7ubJDRuBnujsaNXvauQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+<style>
+    .peer:checked~.rating-star {
+        color: gold;
+    }
+
+    .rating-star:hover {
+        color: #ffdd00;
+    }
+
+    .rating-star:hover~.rating-star {
+        color: #ffdd00;
+    }
+
+    .peer:checked+.rating-star,
+    .peer:checked~.rating-star {
+        color: gold;
+    }
+</style>
+
+<div class="border-b border-gray-200 mb-8">
+    <div class="container mx-auto p-4 flex items-center">
+        <a href="javascript:history.back()" class="text-gray-600 hover:text-gray-800 mr-4">
+            <i class="fa-solid fa-arrow-left text-2xl"></i>
+        </a>
+        <div class="flex items-center text-sm text-gray-600">
+            <a href="/" class="hover:underline">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mr-1" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 12l2-2m0 0l7-7a2 2 0 012.828 0l7 7a2 2 0 010 2.828l-3 3m-2-2v10m-1-4h.01M11 12H12" />
+                </svg>
             </a>
-            <div class="flex items-center text-sm text-gray-600">
-                <a href="/" class="hover:underline">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7a2 2 0 012.828 0l7 7a2 2 0 010 2.828l-3 3m-2-2v10m-1-4h.01M11 12H12" />
-                    </svg>
-                </a>
-                <span class="mx-1">Спортивне харчування в Києві та Україні від METANSHOP.UA</span>
-                <span class="mx-1"> > </span> 
-                <span class="mx-1"><a href="">{{product.category.name}}</a></span>
-                {% if product.under_category%}
-                <span class="mx-1"> > </span>
-                <span class="mx-1"><a href="">{{product.under_category.name}}</a></span>
-                {% endif %}
-                <span class="mx-1"> > </span>
-                <span class="mx-1">{{product.name}}</span>
-            </div>
+            <span class="mx-1">Спортивне харчування в Києві та Україні від METANSHOP.UA</span>
+            <span class="mx-1"> > </span>
+            <span class="mx-1"><a href="">{{product.category.name}}</a></span>
+            {% if product.under_category%}
+            <span class="mx-1"> > </span>
+            <span class="mx-1"><a href="">{{product.under_category.name}}</a></span>
+            {% endif %}
+            <span class="mx-1"> > </span>
+            <span class="mx-1">{{product.name}}</span>
         </div>
     </div>
-    <div class="container mx-auto p-8">
-        <div class="bg-white rounded-lg shadow-md p-6">
-            <div class="flex flex-col md:flex-row">
-                <div class="md:border-r md:pr-6">
-                    <img src="{{product.image.url}}" alt="{{product.name}}" class="w-full rounded-lg mb-4">
+</div>
+<div class="container mx-auto p-8">
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex flex-col md:flex-row">
+            <div class="md:border-r md:pr-6">
+                <img src="{{product.image.url}}" alt="{{product.name}}" class="w-full rounded-lg mb-4">
+            </div>
+            <div class="md:w-2/3 md:pl-6">
+                <div class="flex items-center mb-2">
+                    <h1 class="text-2xl font-bold mr-2">{{ product.name }}</h1>
+                    <span
+                        class="text-sm {% if product.is_available %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %} font-semibold px-2.5 py-0.5 rounded">
+                        {% if product.is_available %}В наявності{% else %}Немає в наявності{% endif %}
+                    </span>
                 </div>
-                <div class="md:w-2/3 md:pl-6">
-                    <div class="flex items-center mb-2">
-                        <h1 class="text-2xl font-bold mr-2">{{ product.name }}</h1>
-                        <span class="text-sm {% if product.is_available %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %} font-semibold px-2.5 py-0.5 rounded">
-                            {% if product.is_available %}В наявності{% else %}Немає в наявності{% endif %}
-                        </span>
-                    </div>
-                    <div class="flex items-center mb-2">
-                        <svg class="w-4 h-4 text-yellow-500 mr-1" fill="currentColor" viewBox="0 0 20 20"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M10 15l-5.878 3.09 1.123-6.545L.109 9.539l6.572-.955L10 2.82l2.319 5.763 6.573.955-4.756 4.624 1.123 6.545z" />
-                        </svg>
-                        <span class="text-grey-500">{% if product.calculate_rating %} {{product.calculate_rating}} {% else %} 0 {% endif %}</span>
-                        <span class="text-gray-600">({{total_reviews}})</span>
-                    </div>
-                    <p class="text-sm text-gray-500 mb-4">Код: {{product.id}}</p>
-                    <p class="mb-4">{{ product.description }}</p>
-                    <div class="flex items-center mb-4">
-                        <span class="font-semibold ml-4 mr-2">Категорія:</span>
-                        <span><a href="">{{ product.category }}</a></span>
-                    </div>
-                    <div class="flex items-center mb-4">
-                        {% if product.discount %}
-                            <span class="bg-red-100 text-red-800 text-xs font-semibold px-2.5 py-0.5 rounded ml-2">-{{ product.discount }}%</span>
-                        {% endif %}
-                    </div>
-                    <div class="flex flex-col mb-4">
-                        {% if product.discount %}
-                            <span class="text-2xl font-bold text-red-600">{{product.price|calculate_discount_price:product.discount}}грн </span> 
-                        {% else %}
-                            <span class="text-3xl font-bold">{{ product.price }} грн</span>
-                        {% endif %}
-                        <form action="{% url 'shop:add_to_cart' product.id %}">
-                            <div class="flex items-center border rounded-lg overflow-hidden mt-2">
-                                <input type="number" name="quantity" value="1" min="1" class="w-16 text-center outline-none" />
-                            </div>
-                            <button {% if not product.is_available %} disabled {% endif %}
-                            class="mt-2 text-white font-bold py-2 px-4 rounded-full border border-gray-300 transition-colors duration-300
+                <div class="flex items-center mb-2">
+                    <svg class="w-4 h-4 text-yellow-500 mr-1" fill="currentColor" viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M10 15l-5.878 3.09 1.123-6.545L.109 9.539l6.572-.955L10 2.82l2.319 5.763 6.573.955-4.756 4.624 1.123 6.545z" />
+                    </svg>
+                    <span class="text-grey-500">{% if product.calculate_rating %} {{product.calculate_rating}} {% else%} 0 {% endif %}</span>
+                    <span class="text-gray-600">({{total_reviews}})</span>
+                </div>
+                <p class="text-sm text-gray-500 mb-4">Код: {{product.id}}</p>
+                <p class="mb-4">{{ product.description }}</p>
+                <div class="flex items-center mb-4">
+                    <span class="font-semibold ml-4 mr-2">Категорія:</span>
+                    <span><a href="">{{ product.category }}</a></span>
+                </div>
+                <div class="flex items-center mb-4">
+                    {% if product.discount %}
+                    <span class="bg-red-100 text-red-800 text-xs font-semibold px-2.5 py-0.5 rounded ml-2">-{{ product.discount }}%</span>
+                    {% endif %}
+                </div>
+                <div class="flex flex-col mb-4">
+                    {% if product.discount %}
+                    <span
+                        class="text-2xl font-bold text-red-600">{{product.price|calculate_discount_price:product.discount}}грн
+                    </span>
+                    {% else %}
+                    <span class="text-3xl font-bold">{{ product.price }} грн</span>
+                    {% endif %}
+                    <form action="{% url 'shop:add_to_cart' product.id %}">
+                        <div class="flex items-center border rounded-lg overflow-hidden mt-2">
+                            <input type="number" name="quantity" value="1" min="1"
+                                class="w-16 text-center outline-none" />
+                        </div>
+                        <button {% if not product.is_available %} disabled {% endif %} class="mt-2 text-white font-bold py-2 px-4 rounded-full border border-gray-300 transition-colors duration-300
                                     {% if not product.is_available %} 
                                         bg-gray-200 cursor-not-allowed text-gray-500 hover:bg-gray-200 hover:border-gray-300
                                     {% else %}
                                         bg-black hover:bg-gray-800 hover:border-gray-400
                                     {% endif %}">
-                                    У кошик
-                            </button>
-                        </form>
+                            У кошик
+                        </button>
+                    </form>
                     <button class="ml-2 text-gray-500 hover:text-gray-700">♡</button>
                     <div class="mb-4">
                         <p class="text-green-500">Безкоштовна доставка від 2500 грн.</p>
@@ -103,8 +130,11 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 {% for prod in interestings %}
                 <div class="bg-white rounded-lg shadow-md p-4">
-                    <a href="{% url 'shop:product_detail' prod.id %}"><img src="{{prod.image.url}}" alt="Product 1" class="w-full rounded-lg mb-2"></a>
-                    <a href="{% url 'shop:product_detail' prod.id %}"><h3 class="font-semibold">{{prod.name}}</h3></a>
+                    <a href="{% url 'shop:product_detail' prod.id %}"><img src="{{prod.image.url}}" alt="Product 1"
+                            class="w-full rounded-lg mb-2"></a>
+                    <a href="{% url 'shop:product_detail' prod.id %}">
+                        <h3 class="font-semibold">{{prod.name}}</h3>
+                    </a>
                     <p class="text-sm text-gray-500">Price: {{prod.price}} грн</p>
                 </div>
                 {% endfor %}
@@ -115,18 +145,21 @@
             {% if reviews.all %}
             <div class="border p-4 mb-2">
                 {% for review in reviews.all %}
-                    <div class="flex items-center mb-1">
-                        <p class="font-semibold mr-2">{{ review.author }}</p>
-                        <div class="flex items-center">
-                            <svg class="w-4 h-4 text-yellow-500 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M10 15l-5.878 3.09 1.123-6.545L.109 9.539l6.572-.955L10 2.82l2.319 5.763 6.573.955-4.756 4.624 1.123 6.545z" />
-                            </svg>
-                            <p>{{ review.rating }}</p>
-                        </div>
+                <div class="flex items-center mb-1">
+                    <p class="font-semibold mr-2">{{ review.author }}</p>
+                    <div class="flex items-center">
+                        <svg class="w-4 h-4 text-yellow-500 mr-1" fill="currentColor" viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M10 15l-5.878 3.09 1.123-6.545L.109 9.539l6.572-.955L10 2.82l2.319 5.763 6.573.955-4.756 4.624 1.123 6.545z" />
+                        </svg>
+                        <p>{{ review.rating }}</p>
                     </div>
-                    <p>{{ review.text }}</p>
-                    <p class="text-sm text-gray-500">{{ review.created_at }}</p>
-                    {% if not forloop.last %}<hr class="my-2">{% endif %}
+                </div>
+                <p>{{ review.text }}</p>
+                <p class="text-sm text-gray-500">{{ review.created_at }}</p>
+                {% if not forloop.last %}
+                <hr class="my-2">{% endif %}
                 {% endfor %}
             </div>
             {%else%}
@@ -138,32 +171,46 @@
                 <p style="color: #999;">Будьте першим, хто залишить свою думку про цей товар.</p>
             </div>
             {% endif %}
-
-            <form method="POST" action="{% url 'shop:create_review' product_id=product.pk %}" class="max-w-md p-4 bg-gray-50 rounded-md space-y-4 text-sm text-gray-800">
+            
+            {% if user.is_authenticated%}
+            <form method="POST" action="{% url 'shop:create_review' product_id=product.pk %}"
+                class="max-w-md p-4 bg-gray-50 rounded-md space-y-4 text-sm text-gray-800">
                 {% csrf_token %}
                 <h2 class="text-base font-medium mb-2">Ваш відгук</h2>
                 <div>
 
                     <label class="block mb-1">Оцінка:</label>
-                        <div class="flex items-center space-x-2">
-                            {% for i in "12345" %}
-                                <input type="radio" name="rating" id="rating{{ i }}" value="{{ i }}" class="form-radio text-blue-600" />
-                                <label for="rating{{ i }}" class="cursor-pointer text-gray-800">{{ i }}</label>
+                    <div class="flex items-center space-x-2">
+                        <div class="flex flex-row-reverse justify-end">
+                            {% for i in "54321" %}
+                            <input type="radio" name="rating" id="rating{{ i }}" value="{{ i }}" class="sr-only peer" />
+                            <label for="rating{{ i }}"
+                                class="rating-star text-3xl text-gray-400 cursor-pointer transition-colors duration-200 ease-in-out">
+                                <i class="fas fa-star"></i>
+                            </label>
                             {% endfor %}
                         </div>
+                    </div>
                 </div>
 
-                    <div>
-                        <label for="text" class="block mb-1">Коментар:</label>
-                        <textarea id="text" name="text" rows="4" placeholder="Напишіть щось..."
-                            class="w-full px-2 py-1 border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-blue-400 resize-none text-sm bg-white"></textarea>
-                    </div>
+                <div>
+                    <label for="text" class="block mb-1">Коментар:</label>
+                    <textarea id="text" name="text" rows="4" placeholder="Напишіть щось..."
+                        class="w-full px-2 py-1 border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-blue-400 resize-none text-sm bg-white"></textarea>
+                </div>
 
-                    <button type="submit"
-                        class="px-3 py-1.5 bg-blue-600 text-white rounded-sm hover:bg-blue-700 transition">
-                        Надіслати
-                    </button>
-                </form>
+                <button type="submit"
+                    class="px-3 py-1.5 bg-blue-600 text-white rounded-sm hover:bg-blue-700 transition">
+                    Надіслати
+                </button>
+            </form>
+            {% else %}
+            <div class="text-center">
+                <a href="{% url 'user_auth:register' %}" class="inline-block bg-black hover:bg-gray-800 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
+                    Зареєструватися, щоб лишити відгук
+                </a>
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>
