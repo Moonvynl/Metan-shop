@@ -18,7 +18,7 @@
             <nav class="flex-grow p-4">
                 <ul class="space-y-2">
                     <li>
-                        <a href="{% url 'shop:admin_panel' %}"
+                        <a href="{% url 'admin_panel:admin_panel' %}"
                             class="sidebar-link block py-2 px-4 rounded-md hover:bg-gray-700 transition duration-200">
                             Головна
                         </a>
@@ -58,7 +58,7 @@
                     </li>
                     <li class="py-2 px-4 text-gray-400 text-sm uppercase tracking-wider">Відгуки</li>
                     <li>
-                        <a href="{% url 'shop:review_moderation' %}"
+                        <a href="{% url 'admin_panel:review_moderation' %}"
                             class="sidebar-link block py-2 px-4 rounded-md hover:bg-gray-700 transition duration-200 relative pr-8">
                             Модерація відгуків
                             {% if unmodered_reviews_count %}
