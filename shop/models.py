@@ -70,19 +70,37 @@ class Review(models.Model):
 
 
 class ProductForCart(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    cart = models.ForeignKey('Cart', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)    
 
     def __str__(self):
-        return f"{self.product.name} for {self.user.username}"
+        return f"{self.product.name} for {self.cart}"
 
 
 class Cart(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    products = models.ManyToManyField(ProductForCart, related_name='products')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    session_key = models.CharField(max_length=40, null=True, blank=True, unique=True)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(user__isnull=False, session_key__isnull=True) |
+                    models.Q(user__isnull=True, session_key__isnull=False),
+                name='user_or_session_key_present' 
+            )
+        ]
+        unique_together = ('user',)
+
 
     def __str__(self):
         return f"Cart for {self.user.username}"
+    
+    @property
+    def total_products_count(self):
+        counter = 0
+        for product in self.productforcart_set.all():
+            counter += product.quantity
+        return counter
 

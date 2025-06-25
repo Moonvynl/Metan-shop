@@ -39,7 +39,9 @@
                 </span>
             </a>
             <span class="hidden md:inline font-medium">{% if user.is_authenticated %}</span>
+            <a href="{% url 'user_auth:profile_info' %}">
             <img src="{{ user.avatar.url }}" alt="Profile" class="w-10 h-10 rounded-full border">
+            </a>
             {% else %} <a class="hover:text-gray-800" href="{% url 'user_auth:login' %}">Увійти</a>/<a
                 class="hover:text-gray-800" href="{% url 'user_auth:register' %}">Зареєструватися</a>{% endif %}</span>
         </div>
@@ -53,8 +55,11 @@
         <div class="p-5 border-b flex justify-between items-center">
             <div class="flex items-center space-x-3">
                 {% if user.is_authenticated %}
-                <img src="{{ user.avatar.url }}" alt="Фото профілю" class="w-10 h-10 rounded-full">
-                <span class="font-semibold">{{user.username}}</span>
+                <a href="{% url 'user_auth:profile_info' %}">
+                <img src="{{ user.avatar.url }}" alt="Фото профілю" class="w-10 h-10 rounded-full"></a>
+                <a href="{% url 'user_auth:profile_info' %}">
+                <span class="font-semibold">{{user.username}}</span></a>
+                
                 {% else %}
                 <span class="font-semibold"><a class="hover:text-gray-800"
                         href="{% url 'user_auth:login' %}">Увійти</a>/<a class="hover:text-gray-800"
@@ -78,7 +83,7 @@
             {% elif user.access == 'OM' %}
                 <li><a href="#" class="block p-2 hover:bg-gray-200 rounded">Order Manager Panel</a></li>
             {% elif user.access == 'AD' %}
-                <li><a href="{% url 'shop:admin_panel' %}" class="block p-2 hover:bg-gray-200 rounded"><strong class='font-bold'>Admin panel</strong></a></li>
+                <li><a href="{% url 'admin_panel:admin_panel' %}" class="block p-2 hover:bg-gray-200 rounded"><strong class='font-bold'>Admin panel</strong></a></li>
             {% endif %}
             <hr>
             <li class="text-gray-500 mt-4">Зв'яжіться з нами</li>
@@ -128,7 +133,7 @@
     {% endblock %}
 
 
-    <footer class="bg-gray-100 text-gray-700 py-10">
+    <footer class="bg-gray-100 text-gray-700 py-10 mt-10">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div>

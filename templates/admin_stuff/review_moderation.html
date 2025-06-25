@@ -48,9 +48,9 @@
                     <td class="py-3 px-6 text-center">
                         <div class="flex item-center justify-center space-x-2">
                             <a class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
-                                href="{% url 'shop:accept_review' review.id %}">Схвалити</a>
+                                href="{% url 'admin_panel:accept_review' review.id %}">Схвалити</a>
                             <a class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-                                href="{% url 'shop:decline_review' review.id %}">Відхилити</a>
+                                href="{% url 'admin_panel:decline_review' review.id %}">Відхилити</a>
                         </div>
                     </td>
                 </tr>

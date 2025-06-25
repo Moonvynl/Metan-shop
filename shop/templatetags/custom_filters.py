@@ -1,4 +1,5 @@
 from django import template
+from ..models import Review
 
 register = template.Library()
 
@@ -25,3 +26,7 @@ def total_price_with_discount(price, discount, quantity):
 @register.filter
 def stars_for_review_moderation(rating):
     return "★" * rating
+
+@register.filter
+def product_reviews_count(product_id):
+    return Review.objects.filter(on_product_id=product_id).filter(is_moderated=True).count()

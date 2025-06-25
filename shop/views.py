@@ -7,8 +7,32 @@ from django.contrib import messages
 from .forms import ReviewCreateForm
 from django.views.generic.edit import CreateView
 from django.utils.html import format_html
-from .mixins import *
+from django.contrib.auth.mixins import LoginRequiredMixin
+import uuid
 
+
+def get_anon_id(request):
+    session_key = request.session.get('anon_user_session_key')
+    if not session_key:
+        session_key = str(uuid.uuid4())
+        request.session['anon_user_session_key'] = session_key
+        request.session.modified = True
+    return session_key
+
+def get_or_create_cart(request):
+    if request.user.is_authenticated:
+        user = request.user
+        if not Cart.objects.filter(user=user).exists():
+            Cart.objects.create(user=user)
+        else:
+            cart = Cart.objects.get(user=user)
+    else:
+        user = get_anon_id(request)
+        if not Cart.objects.filter(session_key=user).exists():
+            Cart.objects.create(session_key=user)
+        else:
+            cart = Cart.objects.filter(session_key=user).first()
+    return cart
 
 class BaseView(TemplateView):
     template_name = 'base.html'
@@ -16,12 +40,18 @@ class BaseView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
-        cart = Cart.objects.filter(user=self.request.user).first() if self.request.user.is_authenticated else None
-        quantity_cart_sum = 0
-        if cart:
-            for product in ProductForCart.objects.filter(user = self.request.user):
-                quantity_cart_sum += product.quantity
-        context['cart_products_count'] = quantity_cart_sum
+        if self.request.user.is_authenticated:
+            cart = Cart.objects.get_or_create(user=self.request.user)[0]
+            cart_products_count = cart.total_products_count
+        else:
+            session_key = get_anon_id(self.request)
+            anon_cart = Cart.objects.filter(session_key=session_key, user__isnull=True).first()
+            if anon_cart:
+                cart_products_count = anon_cart.total_products_count
+            else:
+                Cart.objects.create(session_key=session_key, user=None)
+                cart_products_count = 0
+        context['cart_products_count'] = cart_products_count
         return context
 
 
@@ -51,16 +81,17 @@ class CartView(BaseView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        products = ProductForCart.objects.filter(user=self.request.user).order_by('-created_at')
+        cart = get_or_create_cart(self.request)
+
         total_price = 0
-        for product in products:
+        for product in cart.productforcart_set.all():
             total_price += product.product.price * product.quantity
-        context['products'] = products
-        print(products)
+        context['products'] = cart.productforcart_set.all()
         context['total_price'] = total_price
         return context
 
-class CreateReviewView(BaseView, CreateView):
+
+class CreateReviewView(BaseView, CreateView, LoginRequiredMixin):
     def post(self, request, *args, **kwargs):
         form = ReviewCreateForm(data=request.POST)
         if form.is_valid():
@@ -98,63 +129,25 @@ def delete_product_for_cart(request, product_id):
 
 def add_to_cart(request, product_id):
     product = Product.objects.get(id=product_id)
-    if request.user.is_authenticated:
-        user = request.user
-        cart = Cart.objects.filter(user=user).first()
 
-        if request.GET.get('quantity'):
-            quantity = request.GET.get('quantity')
-        else:
-            quantity = 1
-        
-        if not cart:
-            cart = Cart.objects.create(user=user)
+    cart = get_or_create_cart(request)
 
-        product_for_cart = ProductForCart.objects.filter(user=user, product=product).first()
-        if not product_for_cart:
-            product_for_cart = ProductForCart.objects.create(user=user, product=product)
-            
-        if cart.products.filter(id=product_for_cart.id, user=user).exists():
-            product_for_cart.quantity += int(quantity) if quantity else 1
-            product_for_cart.save()
-            messages.success(request, format_html("<strong class='font-bold'>Успішно!</strong> \"{}\" додано до кошика.", product.name))
-        else:
-            product_for_cart.quantity = int(quantity)
-            product_for_cart.save()
-            cart.products.add(product_for_cart)
-            messages.success(request, format_html("<strong class='font-bold'>Успішно!</strong> \"{}\" додано до кошика.", product.name))
-        return HttpResponseRedirect(request.META["HTTP_REFERER"])
+    if request.GET.get('quantity'):
+        quantity = request.GET.get('quantity')
     else:
-        return redirect('user_auth:login')
+        quantity = 1
 
+    product_for_cart = ProductForCart.objects.filter(cart=cart, product=product).first()
+    if not product_for_cart:
+        product_for_cart = ProductForCart(cart=cart, product=product)
 
-class AdminPanel(AdminRequiredMixin, TemplateView):
-    template_name = 'admin_stuff/admin_panel.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['unmodered_reviews_count'] = Review.objects.filter(is_moderated=False).count()
-        return context
-
-
-class ReviewModerationView(AdminRequiredMixin, TemplateView, ListView):
-    template_name = 'admin_stuff/review_moderation.html'
-    paginate_by = 5
-    object_list = Review.objects.filter(is_moderated=False).order_by('-created_at')
-
-
-class AcceptReviewView(AdminRequiredMixin, View):
-    def get(self, request, *args, **kwargs):
-        review = Review.objects.get(id=self.kwargs['review_id'])
-        review.is_moderated = True
-        review.save()
-        messages.success(request, format_html("<strong class='font-bold'>Успішно!</strong> Відгук для \"{}\" було схвалено", review.on_product.name))
-        return HttpResponseRedirect(request.META["HTTP_REFERER"])
-
-
-class DeclineReviewView(AdminRequiredMixin, View):
-    def get(self, request, *args, **kwargs):
-        review = Review.objects.get(id=self.kwargs['review_id'])
-        review.delete()
-        messages.error(request, format_html("<strong class='font-bold'>Успішно!</strong> Відгук для \"{}\" було видалено.", review.on_product.name))
-        return HttpResponseRedirect(request.META["HTTP_REFERER"])
+    if cart.productforcart_set.filter(id=product_for_cart.id, cart=cart).exists():
+        product_for_cart.quantity += int(quantity) if quantity else 1
+        product_for_cart.save()
+        messages.success(request, format_html("<strong class='font-bold'>Успішно!</strong> \"{}\" додано до кошика.", product.name))
+    else:
+        product_for_cart.quantity = int(quantity)
+        product_for_cart.save()
+        cart.productforcart_set.add(product_for_cart)
+        messages.success(request, format_html("<strong class='font-bold'>Успішно!</strong> \"{}\" додано до кошика.", product.name))
+    return HttpResponseRedirect(request.META["HTTP_REFERER"])
